@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{ED6B64A8-57BD-47B4-82E6-8308F0796141}</ProjectGuid>
+    <ProjectGuid>{0010C42C-5F71-4F61-B2ED-B4E76208255C}</ProjectGuid>
     <RootNamespace>Networklibrary</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -123,10 +123,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Endpoint.h" />
+    <ClInclude Include="Exception.h" />
     <ClInclude Include="Socket.h" />
     <ClInclude Include="SocketInit.h" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Endpoint.cpp" />
     <ClCompile Include="SocketInit.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

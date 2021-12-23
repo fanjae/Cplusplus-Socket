@@ -8,6 +8,6 @@ public:
 
 
 	void Touch();
-}
+};
 
 extern SocketInit g_socketInit;

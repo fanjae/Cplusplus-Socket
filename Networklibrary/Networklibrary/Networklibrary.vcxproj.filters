@@ -15,15 +15,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Exception.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="Socket.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SocketInit.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Endpoint.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SocketInit.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Endpoint.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
