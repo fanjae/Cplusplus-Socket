@@ -14,7 +14,7 @@ public:
 	Endpoint(const char* address, int port);
 	~Endpoint();
 
-	socketaddr_in m_ipv4Endpoint;
+	sockaddr_in m_ipv4Endpoint;
 
 	static Endpoint Any;
 	std::string ToString();

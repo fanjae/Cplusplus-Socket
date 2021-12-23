@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Endpoint.cpp" />
+    <ClCompile Include="Socket.cpp" />
     <ClCompile Include="SocketInit.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
