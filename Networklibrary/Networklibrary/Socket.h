@@ -61,7 +61,7 @@ public:
 	void Bind(const Endpoint& endpoint);
 	void Connect(const Endpoint& endpoint);
 	int Send(const char* data, int length);
-	void close();
+	void Close();
 	void Listen();
 	int Accept(Socket& acceptedSocket, std::string& errorText);
 #ifdef _WIN32

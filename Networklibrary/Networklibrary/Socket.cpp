@@ -82,4 +82,54 @@ void Socket::Bind(const Endpoint& endpoint)
 	}
 }
 
+// Endpoint가 가리키는 주소로 접속.
+void Socket::Connect(const Endpoint& endpoint)
+{
+	if (connect(m_fd, (sockaddr*)&endpoint.m_ipv4Endpoint, sizeof(endpoint.m_ipv4Endpoint)) < 0)
+	{
+		stringstream ss;
+		ss << "connect failed : " << GetLastErrorAsString();
+		throw Exception(ss.str().c_str());
+	}
+}
+
+// 송신을 합니다.
+int Socket::Send(const char *data, int length)
+{
+	return ::send(m_fd, data, length, 0);
+}
+
+void Socket::Close()
+{
+#ifdef _WIN32
+	closesocket(m_fd);
+#else
+	close(m_fd);
+#endif
+}
+
+void Socket::Listen()
+{
+	listen(m_fd, 5000);
+}
+
+// 성공하면 0, 실패하면 다른 값 리턴.
+// errorText에는 실패시 에러 내용이 텍스트로 채워짐.
+// acceptedSocket에는 accept된 소켓 핸들이 들어감.
+int Socket::Accept(Socket & acceptedSocket, string& errorText)
+{
+	acceptedSocket.m_fd = accept(m_fd, NULL, 0);
+	if (acceptedSocket.m_fd == -1)
+	{
+		errorText = GetLastErrorAsString();
+		return -1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+
+
 
