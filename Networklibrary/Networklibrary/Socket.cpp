@@ -130,6 +130,67 @@ int Socket::Accept(Socket & acceptedSocket, string& errorText)
 	}
 }
 
+#ifdef _WIN32
+
+bool Socket::AcceptOverlapped(Socket& acceptCandidateSocket, string& errorText)
+{
+	if (AcceptEx == NULL)
+	{
+		DWORD bytes;
+		// AcceptEx는 여타 소켓함수와 달리 직접 호출하는 것이 아니고,
+		// 함수 포인터를 먼저 가져온 다음 호출할 수 있다. 그것을 여기서 한다.
+		WSAIoctl(m_fd, SIO_GET_EXTENSION_FUNCTION_POINTER, &UUID(WSAID_ACCEPTEX), sizeof(UUID), &AcceptEx, sizeof(AcceptEx), &bytes, NULL, NULL);
+
+		if (AcceptEx = NULL)
+		{
+			throw Exception("Getting AcceptEx ptr failed.");
+		}
+	}
+
+	// 여기에는 accept된 소켓의 로컬주소와 리모트주소가 채워진다.
+	char ignored[200];
+	DWORD ignored2 = 0;
+
+	bool ret = AcceptEx(m_fd, acceptCandidateSocket.m_fd, &ignored, 0, 50, 50, &ignored2, &m_readOverlappedStruct) == TRUE;
+
+	return ret;
+}
+
+// AcceptEx가 I/O 완료를 하더라도 아직 TCP 연결 받기 처리가 다 끝난 것이 아니다.
+// 이 함수를 호출해주어야만 완료된다.
+int Socket::UpdateAcceptContext(Socket& listenSocket)
+{
+	sockaddr_in ignore1;
+	sockaddr_in ignore3;
+	INT ignore2, ignore4;
+
+	char ignore[1000];
+	GetAcceptExSockaddrs(ignore, 0, 50, 50, (sockaddr**)&ignore1, &ignore2, (sockaddr**)&ignore3, &ignore4);
+
+	return setsockopt(m_fd, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char *)&listenSocket.m_fd, sizeof(listenSocket.m_fd));
+}
+
+#endif // _WIN32
+
+Endpoint Socket::GetPeerAddr()
+{
+	Endpoint ret;
+	socklen_t retLength = sizeof(ret.m_ipv4Endpoint);
+	if (::getpeername(m_fd, (sockaddr*)&ret.m_ipv4Endpoint, &retLength) < 0)
+	{
+		stringstream ss;
+		ss << "getPeerAddr failed: " << GetLastErrorAsString();
+		throw Exception(ss.str().c_str());
+	}
+	if (retLength > sizeof(ret.m_ipv4Endpoint))
+	{
+		stringstream ss;
+		ss << "getPeerAddr buffer overrun : " << retLength;
+		throw Exception(ss.str().c_str());
+	}
+
+	return ret;
+}
 
 
 
