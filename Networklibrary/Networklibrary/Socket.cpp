@@ -170,8 +170,9 @@ int Socket::UpdateAcceptContext(Socket& listenSocket)
 	return setsockopt(m_fd, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char *)&listenSocket.m_fd, sizeof(listenSocket.m_fd));
 }
 
-#endif // _WIN32
+#endif // _WIN32 
 
+// EndPoint аж╪р get
 Endpoint Socket::GetPeerAddr()
 {
 	Endpoint ret;
