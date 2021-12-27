@@ -172,7 +172,6 @@ int Socket::UpdateAcceptContext(Socket& listenSocket)
 
 #endif // _WIN32 
 
-// EndPoint 주소 get
 Endpoint Socket::GetPeerAddr()
 {
 	Endpoint ret;
@@ -192,6 +191,29 @@ Endpoint Socket::GetPeerAddr()
 
 	return ret;
 }
+
+// 소켓 수신을 합니다. 
+// 블로킹 소켓이면 1바이트라도 수신하거나 소켓 에러 또는 소켓 연결이 끊어질때까지 기다림
+// 논블로킹 소켓이면 기다려야 하는 경우 즉시 리턴, EWOULDBLOCK이 errno나 GetLastError에서 나오게 됨.
+// 리턴값: recv 리턴값 그대로입니다.
+int Socket::Receive()
+{
+	return (int)recv(m_fd, m_receiveBuffer, MaxReceiveLength, 0);
+}
+
+#ifdef _WIN32
+
+// overlapped 수신을 검. 즉, 백그라운드로 수신 처리.
+// 수신 되는 데이터는 m_receiveBuffer에 비동기로 채워짐.
+// 리턴값 : WSARecv의 리턴값 그대로.
+
+int Socket::ReceiverOverlapped()
+{
+
+}
+
+#endif
+
 
 
 
