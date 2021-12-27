@@ -209,11 +209,60 @@ int Socket::Receive()
 
 int Socket::ReceiverOverlapped()
 {
+	WSABUF b;
+	b.buf = m_receiveBuffer;
+	b.len = MaxReceiveLength;
 
+	// overlapped I/O가 진행되는 동안 여기에 값이 채워짐.
+	m_readFlags = 0;
+
+	return WSARecv(m_fd, &b, 1, NULL, &m_readFlags, &m_readOverlappedStruct, NULL);
 }
 
 #endif
 
+// NonBlock Socket으로 모드를 설정한다.
+void Socket::SetNonblocking()
+{
+	u_long val = 1;
+#ifdef _WIN32
+	int ret = ioctlsocket(m_fd, FIONBIO, &val);
+#else
+	int ret = ioctl(m_fd, FIONBIO, &val);
+#endif
+	if (ret != 0)
+	{
+		stringstream ss;
+		ss << "bind failed: " << GetLastErrorAsString();
+		throw Exception(ss.str().c_str());
+	}
+}
+
+// Win32 오류를 문자열 형식으로 반환
+// 오류 없는 경우 빈 문자열 반환
+// 출처: https://stackoverflow.com/questions/1387064/how-to-get-the-error-message-from-the-error-code-returned-by-getlasterror
+
+std::string GetLasterrorAsString()
+{
+#ifdef _WIN32
+	// Get the error Message, if any.
+	DWORD errorMessageID = ::GetLastError();
+	if (errorMessageID == 0)
+		return std::string();
+
+	LPSTR messageBuffer = nullptr;
+	size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+
+	std::string message(messageBuffer, size);
+
+	// Free the Buffer.
+	LocalFree(messageBuffer);
+
+#else
+	std::string message = strerror(errno);
+#endif
+	return message;
+}
 
 
 

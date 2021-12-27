@@ -46,7 +46,7 @@ public:
 
 	// Receive나 ReceiverOverlapped에 의해 수신되는 데이터가 채워지는 곳.
 	// Overlapped Receive를 하는 동안 이곳이 사용. Overlapped가 진행되는 동안 값을 건드리지 말 것.
-	char m_receiverBuffer[MaxReceiveLength];
+	char m_receiveBuffer[MaxReceiveLength];
 
 #ifdef _WIN32
 	// overlapped 수신을 하는 동안 여기에 recv의 flags에 준하는 값이 채워짐 overlapped I/O가 진행되는 동안 건드리지 말 것.
@@ -79,7 +79,7 @@ public:
 std::string GetLastErrorAsString();
 
 #ifdef _WIN32
-#pragma comment(lib,"ws2_32.lib");
-#pragma comment(lib,"mswsock.lib");
+#pragma comment(lib,"ws2_32.lib")
+#pragma comment(lib,"mswsock.lib")
 #endif
 
