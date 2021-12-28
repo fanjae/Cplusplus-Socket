@@ -1,5 +1,6 @@
 #pragma once
 
+#pragma warning (disable:4996)
 #define _CRT_SECURE_NO_WARNINGS
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
@@ -19,4 +20,4 @@
 #include <sstream>
 #include <stdio.h>
 #include <string.h>
-#include <cstdint
+#include <cstdint>

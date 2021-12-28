@@ -124,13 +124,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Endpoint.h" />
+    <ClInclude Include="Epoll.h" />
     <ClInclude Include="Exception.h" />
+    <ClInclude Include="ImaysNet.h" />
+    <ClInclude Include="Iocp.h" />
+    <ClInclude Include="Poll.h" />
+    <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Socket.h" />
     <ClInclude Include="SocketInit.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Endpoint.cpp" />
+    <ClCompile Include="Epoll.cpp" />
+    <ClCompile Include="Exception.cpp" />
+    <ClCompile Include="Iocp.cpp" />
+    <ClCompile Include="Poll.cpp" />
     <ClCompile Include="Socket.cpp" />
     <ClCompile Include="SocketInit.cpp" />
   </ItemGroup>
