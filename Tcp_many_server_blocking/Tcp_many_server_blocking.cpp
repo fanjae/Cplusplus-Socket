@@ -35,3 +35,11 @@ shared_ptr <Socket> listenSocket; // 리스닝 소켓
 void RemoteclientThread(shared_ptr<RemoteClient> remoteclient);
 void ListenSocketThread();
 
+void ProcessSignalAction(int sig_number)
+{
+	if (sig_number == SIGINT)
+	{
+		stopWorking = true;
+		mainthreadWorkCount.Notify();
+	}
+}
