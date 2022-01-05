@@ -62,7 +62,90 @@ int main()
 
 		while (!stopWorking)
 		{
+			readFds.reserve(remoteClients.size() + 1);
+			readFds.clear();
+			readFdsToRemoteClients.reserve(remoteClients.size() + 1);
+			readFdsToRemoteClients.clear();
 
+			for (auto i : remoteClients)
+			{
+				PollFD item;
+				item.m_pollfd.events = POLLRDNORM;
+				item.m_pollfd.fd = i.second->tcpConnection.m_fd;
+				item.m_pollfd.revents = 0;
+				readFds.push_back(item);
+				readFdsToRemoteClients.push_back(i.first);
+			}
+
+			// 마지막 항목은 리슨소켓입니다.
+			PollFD item2;
+			item2.m_pollfd.events = POLLRDNORM;
+			item2.m_pollfd.fd = listenSocket.m_fd;
+			item2.m_pollfd.revents = 0;
+			readFds.push_back(item2);
+
+			// I/O 가능 이벤트가 있을 때까지 기다립니다.
+			Poll(readFds.data(), (int)readFds.size(), 100);
+
+			// ReadFds를 수색해서 필요한 처리를 합니다.
+			int num = 0;
+			for (auto readFd : readFds)
+			{
+				if (readFd.m_pollfd.revents != 0)
+				{
+					if (num == readFds.size() - 1) // 리슨소켓이면
+					{
+						// accept를 처리한다.
+						auto remoteClient = make_shared<RemoteClient>();
+
+						// 이미 "클라이언트 연결이 들어왔음" 이벤트가 온 상태이므로 그냥 이것을 호출해도 된다.
+						string ignore;
+						listenSocket.Accept(remoteClient->tcpConnection, ignore);
+						remoteClient->tcpConnection.SetNonblocking();
+
+						// 새 클라이언트를 목록에 추가.
+						remoteClients.insert({ remoteClient.get(), remoteClient });
+
+						cout << "Client joined. There are " << remoteClients.size() << " connections. \n";
+					}
+					else // TCP 연결 소켓이면
+					{
+						// 받은 데이터를 그대로 회신한다.
+						RemoteClient* remoteClient = readFdsToRemoteClients[num];
+
+						int ec = remoteClient->tcpConnection.Receive();
+						if (ec <= 0)
+						{
+							// 에러 혹은 소켓 종료이다.
+							// 해당 소켓은 제거해버리자.
+							remoteClient->tcpConnection.Close();
+							remoteClients.erase(remoteClient);
+
+							cout << "Client left. There are " << remoteClients.size() << " connections.\n";
+						}
+						else
+						{
+							// 받은 데이터를 그대로 송신한다.
+
+							// 원칙대로라면 TCP 스트림 특성상 일부만 송신하고 리턴하는 경우도 고려해야 하나,
+							// 여기서는 생략(책 내용 상 생략되어있음)
+							remoteClient->tcpConnection.Send(remoteClient->tcpConnection.m_receiveBuffer, ec);
+						}
+					}
+				}
+				num++;
+			}
 		}
+
+		// 사용자가 CTL-C를 눌러서 루프를 나갔다. 모든 종료를 진행.
+		listenSocket.Close();
+		remoteClients.clear();
+
 	}
+	catch (Exception& e)
+	{
+		cout << "Exception! " << e.what() << endl;
+	}
+
+	return 0;
 }
