@@ -11,6 +11,8 @@
 #include <iostream>
 #include <mutex>
 
+#pragma comment (lib, "./ImaysNet.lib")
+
 using namespace std;
 
 // TCP 연결 각각의 객체.

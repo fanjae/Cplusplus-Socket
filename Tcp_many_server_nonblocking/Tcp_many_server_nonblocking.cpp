@@ -10,6 +10,9 @@
 #include <iostream>
 #include <mutex>
 
+#pragma comment (lib, "./ImaysNet.lib")
+
+
 using namespace std;
 
 // true가 되면 프로그램을 종료함.
